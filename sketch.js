@@ -37,18 +37,18 @@ function preload(){
 }
 
 function setup(){
-  createCanvas(600,200);
+  createCanvas(windowWidth, windowHeight);
   
   //criar um sprite do trex
-  t_rex = createSprite(60,155,20,50);
+  t_rex = createSprite(60, height - 45,20,50);
   t_rex.addAnimation("correndo",t_rex_correndo);
   t_rex.addAnimation('collide', t_rex_collide);
   
   //criando o solo
   bordas = createEdgeSprites();
-  solo = createSprite(200,175,600,20);
+  solo = createSprite(0, height - 25, width, 20);
   solo.addImage("solo", solo_anima);
-  solo_invis = createSprite(200, 190, 600, 10);
+  solo_invis = createSprite(200, height - 10, 600, 10);
   solo_invis.visible = false;
   
   grupoCacto = new Group();
@@ -60,10 +60,10 @@ function setup(){
   //t_rex.setCollider('rectangle', 0, 0, 400, 100, 0);
   //t_rex.debug = true;
   
-  restaurar = createSprite(300, 100, 50, 50);
+  restaurar = createSprite(width/2, height - 100, 50, 50);
   restaurar.addImage('restart', restaurar_image);
   
-  gameOver = createSprite(300, 50, 50, 50);
+  gameOver = createSprite(width/2, height - 150, 50, 50);
   gameOver.addImage('gameOver', gameOver_image);
   
   restaurar.visible = false;
@@ -92,15 +92,16 @@ function draw(){
   
   if(etapaJogo === JOGAR) {
     //salto trex
-    if(keyDown("space") && t_rex.y > 150) {
+    if(touches.lenght > 0 || keyDown("space") && t_rex.y > height - 45) {
       t_rex.velocityY = -10;
       som2.play();
+      touches = [];
     }
     //deslocamento do solo
     solo.velocityX = -(2 + pontuacao/100);
     
     //reinicio do solo
-    if(solo.x < 0){
+    if(solo.x < solo.width/5){
       solo.x = solo.width/2;
     }
     pontuacao = pontuacao+ (Math.round(frameRate()/60));
@@ -136,30 +137,30 @@ function draw(){
   t_rex.scale = 0.5;
   
   //potuaçao
-  text('Pontuação: '+pontuacao, 500, 20);
-  text('Recorde: ' +recorde, 500, 50);
+  text('Pontuação: '+pontuacao, width - 100, height - 180);
+  text('Recorde: ' +recorde, width - 100, height - 150);
   
   drawSprites();
   
 }
 function nuvens() {
   if(frameCount%60 === 0) {
-    nuven = createSprite(600, 100, 20, 20);
+    nuven = createSprite(width, 100, 20, 20);
     nuven.velocityX = - (3 + pontuacao/100);
     nuven.addImage('nuven_image', nuven_image);
-    nuven.y = Math.round(random(20, 100));
+    nuven.y = Math.round(random(height - 180, height - 100));
     nuven.scale = random(0.5, 1);
     nuven.depth = t_rex.depth- 1;
-    nuven.lifetime = 210;
+    nuven.lifetime = (width/nuven.velocityX);
     grupoNuvens.add(nuven);
      }
 }
 function  cactos() {
 if(frameCount%200 === 0) {
-  cacto = createSprite(600, 155, 30, 30);
+  cacto = createSprite(width, height - 45, 30, 30);
   cacto.velocityX = - (2 + pontuacao/100)
   //cacto.scale = random(0.3, 0.5);
-  cacto.lifetime = 310;
+  cacto.lifetime = (width/cacto.velocityX);
   sorteio = Math.round(random(1,6));
   switch(sorteio){
     case 1: cacto.addImage ('image1', cacto_image1);
